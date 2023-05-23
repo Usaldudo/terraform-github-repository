@@ -27,6 +27,11 @@ output "git_clone_url" {
   description = "URL that can be provided to git clone to clone the repository anonymously via the git protocol."
 }
 
+output "repo_public_key" {
+  value       = data.github_actions_public_key.repo_public_key
+  description = "Repository public key to encrypt secrets"
+}
+
 # ----------------------------------------------------------------------------------------------------------------------
 # OUTPUT ALL RESOURCES AS FULL OBJECTS
 # ----------------------------------------------------------------------------------------------------------------------

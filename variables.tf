@@ -373,6 +373,50 @@ variable "branch_protections_v4" {
   }
 }
 
+variable "environment" {
+  description = "(Optional) A list of environments to apply to the repository. Default is []."
+  # default = []
+  type = list(object({
+    name       = string
+    wait_timer = optional(number, 0)
+    reviewers = optional(object({
+      users = optional(list(number), [])
+      teams = optional(list(number), [])
+    }))
+    deployment_branch_policy = object({
+      protected_branches     = bool
+      custom_branch_policies = bool
+    })
+    variables         = optional(map(string))
+    plaintext_secrets = optional(map(string))
+    encrypted_secrets = optional(map(string))
+  }))
+  default = []
+  # # Example:
+  # environment = [{
+  #   name       = "test"
+  #   wait_timer = 10
+  #   reviewers = {
+  #     users = [data.github_user.current.id]
+  #     teams = []
+  #   }
+  #   deployment_branch_policy = {
+  #     protected_branches     = true
+  #     custom_branch_policies = false
+  #   }
+  #   variables = {
+  #     MY_ENV_VAR  = "42"
+  #     MY_ENV_VAR2 = "mysecondvar"
+  #   }
+  #   plaintext_secrets = {
+  #     "MY_ENV_SECRET" = "secret"
+  #   }
+  #   encrypted_secrets = {
+  #     "MY_ENV_ENC_SECRET" = "MTIzNDU="
+  #   }
+  # }]
+}
+
 variable "issue_labels_merge_with_github_labels" {
   description = "(Optional) Specify if you want to merge and control githubs default set of issue labels."
   type        = bool
@@ -519,6 +563,16 @@ variable "encrypted_secrets" {
   default = {}
 }
 
+variable "repo_variables" {
+  description = "(Optional) Configuring actions variables. For details please check: https://www.terraform.io/docs/providers/github/r/actions_variable"
+  type        = map(string)
+  # Example:
+  # repo_variables = {
+  #     "MY_VAR" = "42"
+  # }
+
+  default = {}
+}
 
 variable "autolink_references" {
   description = "(Optional) Configuring autolink references. For details please check: https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_autolink_reference"

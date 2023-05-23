@@ -174,6 +174,18 @@ variable "repository_with_defaults_description" {
   default     = "A public repository created with terraform to test the terraform-github-repository module."
 }
 
+variable "repo_variable" {
+  description = "The name of the variable"
+  type        = string
+  default     = "MYVAR"
+}
+
+variable "repo_variable_text" {
+  description = "Variable value"
+  type        = string
+  default     = "10"
+}
+
 variable "secret_name" {
   description = "The name of the secret."
   type        = string

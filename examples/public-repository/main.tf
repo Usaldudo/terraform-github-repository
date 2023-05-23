@@ -10,7 +10,7 @@ module "repository" {
   version = "~> 0.13.0"
 
   module_depends_on = [
-    module.team
+    github_team.team
   ]
 
   name               = "my-public-repository"
@@ -31,8 +31,36 @@ module "repository" {
   topics             = ["terraform", "unit-test"]
 
   admin_team_ids = [
-    module.team.team.id
+    github_team.team.team.id
   ]
+
+  repo_variables = {
+    MY_VAR = "42"
+  }
+  plaintext_secrets = {
+    "MY_SECRET" = "secret"
+  }
+  environment = [{
+    name       = "test"
+    wait_timer = 10
+    reviewers = {
+      users = [data.github_user.current.id]
+      teams = [github_team.team.id]
+    }
+    deployment_branch_policy = {
+      protected_branches     = true
+      custom_branch_policies = false
+    }
+    variables = {
+      MY_ENV_VAR = "42"
+    }
+    plaintext_secrets = {
+      "MY_ENV_SECRET" = "secret"
+    }
+    encrypted_secrets = {
+      "MY_ENV_ENC_SECRET" = "MTIzNDU="
+    }
+  }]
 
   webhooks = [
     {
@@ -61,36 +89,15 @@ module "repository" {
 
       required_pull_request_reviews = {
         dismiss_stale_reviews           = true
-        dismissal_teams                 = [module.team.name]
+        dismissal_teams                 = [github_team.team.slug]
         require_code_owner_reviews      = true
         required_approving_review_count = 1
       }
 
       restrictions = {
-        teams = [module.team.name]
+        teams = [github_team.team.slug]
       }
     }
-  ]
-}
-
-# ---------------------------------------------------------------------------------------------------------------------
-# TEAM
-# ---------------------------------------------------------------------------------------------------------------------
-
-module "team" {
-  source  = "mineiros-io/team/github"
-  version = "~> 0.8.0"
-
-  name        = "DevOps"
-  description = "The DevOps Team"
-  privacy     = "secret"
-
-  # TEAM MEMBERSHIP
-  # We are adding a member to this team: "terraform-test-user-2".
-  # This existing users and already member of the GitHub Organization "terraform-test" that
-  # is an Organization managed by Mineiros.io to run integration tests with Terratest.
-  members = [
-    "terraform-test-user-2",
   ]
 }
 

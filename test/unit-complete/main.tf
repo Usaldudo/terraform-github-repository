@@ -64,6 +64,10 @@ module "repository" {
     github_team.team.id
   ]
 
+  repo_variables = {
+    (var.repo_variable) = var.repo_variable_text
+  }
+
   plaintext_secrets = {
     (var.secret_name) = var.secret_text
   }

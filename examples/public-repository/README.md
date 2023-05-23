@@ -41,6 +41,34 @@ module "repository" {
     github_team.team.id
   ]
 
+  repo_variables = {
+    MY_VAR = "42"
+  }
+  plaintext_secrets = {
+    "MY_SECRET" = "secret"
+  }
+  environment = [{
+    name       = "test"
+    wait_timer = 10
+    reviewers = {
+      users = [data.github_user.current.id]
+      teams = [github_team.team.id]
+    }
+    deployment_branch_policy = {
+      protected_branches     = true
+      custom_branch_policies = false
+    }
+    variables = {
+      MY_ENV_VAR = "42"
+    }
+    plaintext_secrets = {
+      "MY_ENV_SECRET" = "secret"
+    }
+    encrypted_secrets = {
+      "MY_ENV_ENC_SECRET" = "MTIzNDU="
+    }
+  }]
+
   webhooks = [
     {
       active       = true
